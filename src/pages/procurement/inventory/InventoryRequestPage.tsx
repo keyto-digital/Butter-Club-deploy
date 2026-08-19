@@ -166,18 +166,12 @@ export default function InventoryRequestPage({
     },[]);
 
     const destinationStores = useMemo(() => {
-        if (!form.entity_id) {
-            return [];
-        }
-
         return stores.filter(
             (store) =>
-                store.entity_id === form.entity_id &&
                 store.id !== form.source_store_id
         );
     }, [
         stores,
-        form.entity_id,
         form.source_store_id,
     ]);
 

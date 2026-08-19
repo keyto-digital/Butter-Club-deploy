@@ -463,19 +463,11 @@ export function PurchaseOrderPage() {
 
   useEffect(() => {
     const loadStores = async () => {
-      const entityId = getCustomUser()?.entity_id ?? null;
-
-      let query = supabase
+      const { data, error } = await supabase
         .from("stores")
         .select("id, code, name, entity_id, is_active")
         .eq("is_active", true)
         .order("code");
-
-      if (entityId) {
-        query = query.eq("entity_id", entityId);
-      }
-
-      const { data, error } = await query;
 
       if (error) {
         console.error("Gagal memuat store:", error);

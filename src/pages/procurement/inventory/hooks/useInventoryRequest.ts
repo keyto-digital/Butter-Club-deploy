@@ -187,9 +187,8 @@ export function useInventoryRequests(entityId?:string|null){
             .eq("is_active",true)
             .order("code");
 
-        if(entityId){
-            storeQuery=storeQuery.eq("entity_id",entityId);
-            itemQuery=itemQuery.eq("entity_id",entityId);
+        if (entityId) {
+            itemQuery = itemQuery.eq("entity_id", entityId);
         }
 
         const [storeResult,itemResult]=await Promise.all([
