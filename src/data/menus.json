@@ -1,0 +1,518 @@
+[
+  {
+    "key": "Keberangkatan",
+    "label": "Keberangkatan", 
+    "sub": [
+      {
+        "label": "Dashboard",
+        "access": "dashboard",
+        "path": "/dashboard",
+        "component": "Dashboard"
+      },
+      { 
+        "label": "Surat Jalan", 
+        "access": "Keberangkatan -> Surat Jalan",
+        "path": "/surat-jalan",
+        "component": "SuratJalan"
+      },
+      {
+        "label": "Tambah Perpal",
+        "access": "surat_jalan.tambah_perpal",
+        "path": "/surat-jalan/tambah-perpal",
+        "component": "TambahPerpal"
+      },
+      { 
+        "label": "Cetak Surat Jalan", 
+        "access": "Keberangkatan -> Cetak Surat Jalan",
+        "path": "/cetak-surat-jalan",
+        "component": "CetakSuratJalan"
+      },
+      { 
+        "label": "Uang Saku Driver", 
+        "access": "Keberangkatan -> Uang Saku Driver",
+        "path": "/uang-saku-driver",
+        "component": "UangSakuDriver"
+      },
+      { 
+        "label": "Premi Driver", 
+        "access": "Keberangkatan -> Premi Driver",
+        "path": "/premi-driver",
+        "component": "PremiDriver" 
+      }
+    ]
+  },
+  {
+    "key": "Kasir",
+    "label": "Kasir",
+    "sub": [
+      { 
+        "label": "Kasbon", 
+        "access": "Kasir -> Kasbon",
+        "path": "/kasbon",
+        "component": "Kasbon" 
+      },
+      { 
+        "label": "Kas Harian", 
+        "access": "Kasir -> Kas Harian",
+        "path": "/kas-harian",
+        "component": "KasHarian" 
+      },
+      {
+        "label": "kas_harian.edit",
+        "access": "kas_harian.edit",
+        "path": "/kas-harian/edit",
+        "component": "KasHarianEdit"
+      },
+      {
+        "label": "kas_harian.delete",
+        "access": "kas_harian.delete",
+        "path": "/kas-harian/delete",
+        "component": "KasHarianDelete"
+      },
+      {
+        "label": "kas_harian.tombol_delete",
+        "access": "kas_harian.bulk_delete",
+        "path": "/kas-harian/tomboldelete",
+        "component": "KasHarianTombolDelete"
+      }
+    ]
+  },
+  {
+    "key": "Produk",
+    "label": "Produk",
+    "sub": [
+      { 
+        "label": "Kategori Produk", 
+        "access": "Produk -> Kategori Produk",
+        "path": "/item-categories",
+        "component": "ItemCategoryPage"
+      },
+      { 
+        "label": "Sub Kategori Produk", 
+        "access": "Produk -> Sub Kategori Produk",
+        "path": "/item-subcategories",
+        "component": "ItemSubcategoryPage"
+      },
+      { 
+        "label": "Store", 
+        "access": "Produk -> Store",
+        "path": "/stores",
+        "component": "StorePage"
+      },
+      { 
+        "label": "Daftar Artikel", 
+        "access": "Produk -> Daftar Artikel",
+        "path": "/items",
+        "component": "ItemPage"
+      },
+      { 
+        "label": "Unit", 
+        "access": "Produk -> Unit",
+        "path": "/units",
+        "component": "UnitPage"
+      }
+    ]
+  },
+  {
+    "key": "Purchasing",
+    "label": "Purchasing",
+    "sub": [
+      { 
+        "label": "Supplier List", 
+        "access": "Purchasing -> Supplier",
+        "path": "/suppliers",
+        "component": "SupplierPage"
+      },
+      {
+        "label": "Purchase Order",
+        "access": "Purchasing -> Purchase Order",
+        "path": "/purchase-orders",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.create",
+        "access": "purchase_order.create",
+        "path": "/purchase-orders/create",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.edit_draft",
+        "access": "purchase_order.edit_draft",
+        "path": "/purchase-orders/edit-draft",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.delete_draft",
+        "access": "purchase_order.delete_draft",
+        "path": "/purchase-orders/delete-draft",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.open",
+        "access": "purchase_order.open",
+        "path": "/purchase-orders/open",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.cancel",
+        "access": "purchase_order.cancel",
+        "path": "/purchase-orders/cancel",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.close_outstanding",
+        "access": "purchase_order.close_outstanding",
+        "path": "/purchase-orders/close-outstanding",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.print",
+        "access": "purchase_order.print",
+        "path": "/purchase-orders/print",
+        "component": "PurchaseOrderPage"
+      },
+      {
+        "label": "purchase_order.export",
+        "access": "purchase_order.export",
+        "path": "/purchase-orders/export",
+        "component": "PurchaseOrderPage"
+      }
+    ]
+  },
+  {
+    "key": "Receiving",
+    "label": "Receiving",
+    "sub": [
+      {
+        "label": "Receiving Record",
+        "access": "Receiving -> Receiving Record",
+        "path": "/receiving-records",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.create",
+        "access": "receiving.create",
+        "path": "/receiving-records/create",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.edit_draft",
+        "access": "receiving.edit_draft",
+        "path": "/receiving-records/edit-draft",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.delete_draft",
+        "access": "receiving.delete_draft",
+        "path": "/receiving-records/delete-draft",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.post",
+        "access": "receiving.post",
+        "path": "/receiving-records/post",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.print",
+        "access": "receiving.print",
+        "path": "/receiving-records/print",
+        "component": "ReceivingPage"
+      },
+      {
+        "label": "receiving.export",
+        "access": "receiving.export",
+        "path": "/receiving-records/export",
+        "component": "ReceivingPage"
+      }
+    ]
+  },
+  {
+    "key": "Account Payable",
+    "label": "Account Payable",
+    "sub": [
+      {
+        "label": "Invoice Supplier",
+        "access": "Account Payable -> Invoice Supplier",
+        "path": "/invoice-suppliers",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_payment_request.create",
+        "access": "ap_payment_request.create",
+        "path": "/payment-request/create",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_payment_request.detail",
+        "access": "ap_payment_request.detail",
+        "path": "/payment-request/detail",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_payment_request.approve",
+        "access": "ap_payment_request.approve",
+        "path": "/payment-request/approve",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_payment_request.cancel",
+        "access": "ap_payment_request.cancel",
+        "path": "/payment-request/cancel",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_payment_request.print",
+        "access": "ap_payment_request.print",
+        "path": "/payment-request/print",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "ap_invoice.export",
+        "access": "ap_invoice.export",
+        "path": "/payment-request/export",
+        "component": "SupplierInvoicePage"
+      },
+      {
+        "label": "Payment Invoice",
+        "access": "Account Payable -> Payment Invoice",
+        "path": "/payment-invoices",
+        "component": "PaymentPage"
+      },
+      {
+        "label": "ap_payment.create",
+        "access": "ap_payment.create",
+        "path": "/payment-invoices/create",
+        "component": "PaymentPage"
+      },
+      {
+        "label": "ap_payment.edit",
+        "access": "ap_payment.edit",
+        "path": "/payment-invoices/edit",
+        "component": "PaymentPage"
+      },
+      {
+        "label": "ap_payment.delete",
+        "access": "ap_payment.delete",
+        "path": "/payment-invoices/delete",
+        "component": "PaymentPage"
+      },
+      {
+        "label": "ap_payment.export",
+        "access": "ap_payment.export",
+        "path": "/payment-invoices/export",
+        "component": "PaymentPage"
+      }
+    ]
+  },
+  {
+    "key": "Storekeeper",
+    "label": "Storekeeper",
+    "sub": [
+      {
+        "label": "Store Request",
+        "access": "Storekeeper -> Store Request",
+        "path": "/store-request",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.create",
+        "access": "inventory_request.create",
+        "path": "/store-request/create",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.submit",
+        "access": "inventory_request.submit",
+        "path": "/store-request/submit",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.approve",
+        "access": "inventory_request.approve",
+        "path": "/store-request/approve",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.transfer",
+        "access": "inventory_request.transfer",
+        "path": "/store-request/transfer",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.print",
+        "access": "inventory_request.print",
+        "path": "/store-request/print",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "inventory_request.export",
+        "access": "inventory_request.export",
+        "path": "/store-request/export",
+        "component": "InventoryRequestPage"
+      },
+      {
+        "label": "General Store",
+        "access": "Storekeeper -> General Store",
+        "path": "/general-store",
+        "component": "StorekeeperPage"
+      },
+      {
+        "label": "Transfer List",
+        "access": "Storekeeper -> Transfer List",
+        "path": "/transfer-list",
+        "component": "TransferPage"
+      },
+      {
+        "label": "Opname List",
+        "access": "Storekeeper -> Opname List",
+        "path": "/opname-list",
+        "component": "OpnameReportPage"
+      },
+      {
+        "label": "Adjustment List",
+        "access": "Storekeeper -> Adjustment List",
+        "path": "/adjustment-list",
+        "component": "AdjustmentReportPage"
+      }
+    ]
+  },
+  {
+    "key": "Laporan",
+    "label": "Laporan",
+    "sub": [
+      { 
+        "label": "Kas Kasir", 
+        "access": "Laporan -> Kas Kasir",
+        "path": "/kas-kasir",
+        "component": "Kaskasir" 
+      },
+      { 
+        "label": "Jaminan Driver", 
+        "access": "Laporan -> Jaminan Driver",
+        "path": "/jaminan-driver",
+        "component": "JaminanDriver" 
+      },
+      { 
+        "label": "Driver Ledger", 
+        "access": "Laporan -> Driver Ledger",
+        "path": "/driver-ledger",
+        "component": "DriverLedger" 
+      },
+      {
+        "label": "Log Transaksi",
+        "access": "Laporan -> Log Transaksi",
+        "path": "/log-transaksi",
+        "component": "DashboardLog"
+      }
+    ]
+  },
+  {
+    "key": "Accounting",
+    "label": "Accounting",
+    "sub": [
+      {
+        "label": "Jurnal", 
+        "access": "Accounting -> Jurnal",
+        "path": "/jurnal",
+        "component": "Jurnal"
+      },
+      {
+        "label": "Chart of Accounts",
+        "access": "Accounting -> Chart of Accounts",
+        "path": "/coa",
+        "component": "CoaPage"
+      },
+      {
+        "label": "Account Mapping",
+        "access": "Accounting -> Akun Mapping",
+        "path": "/account-mapping",
+        "component": "AccountMappingPage"
+      },
+      {
+        "label": "Buku Besar",
+        "access": "Accounting -> Buku Besar",
+        "path": "/buku-besar",
+        "component": "GeneralLedgerPage"
+      },
+      {
+        "label": "Trial Balance",
+        "access": "Accounting -> Trial Balance",
+        "path": "/trial-balance",
+        "component": "TrialBalancePage"
+      },
+      {
+        "label": "Laba Rugi",
+        "access": "Accounting -> Laba Rugi",
+        "path": "/laba-rugi",
+        "component": "IncomeStatementPage"
+      },
+      {
+        "label": "Neraca",
+        "access": "Accounting -> Neraca",
+        "path": "/neraca",
+        "component": "BalanceSheetPage"
+      }
+    ]
+  },
+  {
+    "key": "Konfigurasi",
+    "label": "Konfigurasi",
+    "sub": [
+      { 
+        "label": "Role Akses", 
+        "access": "Konfigurasi -> Role Akses",
+        "path": "/role-akses",
+        "component": "RoleAkses" 
+      },
+      { 
+        "label": "Edit Role", 
+        "access": "Konfigurasi -> Edit Role",
+        "path": "/edit-role",
+        "component": "EditRole" 
+      },
+      { 
+        "label": "List User", 
+        "access": "Konfigurasi -> List User",
+        "path": "/list-user",
+        "component": "ListUser" 
+      },
+      { 
+        "label": "Armada", 
+        "access": "Konfigurasi -> Armada",
+        "path": "/armada",
+        "component": "Armada"
+      },
+      { 
+        "label": "Driver", 
+        "access": "Konfigurasi -> Driver",
+        "path": "/driver",
+        "component": "Driver"
+      },
+      { 
+        "label": "Rute", 
+        "access": "Konfigurasi -> Rute",
+        "path": "/rute",
+        "component": "Rute"
+      },
+      { 
+        "label": "Daftar Cabang", 
+        "access": "Konfigurasi -> Entity",
+        "path": "/entity",
+        "component": "Entity"
+      },
+      { 
+        "label": "Jenis Potongan", 
+        "access": "Konfigurasi -> Jenis Potongan",
+        "path": "/jenis-potongan",
+        "component": "JenisPotongan"
+      },
+      { 
+        "label": "Payment Methods Purchase", 
+        "access": "Produk -> Payment Methods Purchase",
+        "path": "/purchase-methods",
+        "component": "PurchaseSettlementMethodPage"
+      }
+    ]
+  }
+]
