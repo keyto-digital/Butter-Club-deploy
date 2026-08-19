@@ -7,8 +7,12 @@ import { getMenus } from "../lib/getMenus";
 import { useAutoLogout } from "../utils/useAutoLogout";
 import bcrypt from "bcryptjs";
 
+const SIDEBAR_COLLAPSED = 64;
+const SIDEBAR_EXPANDED = 230;
+
 export default function Layout() {
-  useAutoLogout(); // ⏱️ aktif di semua halaman
+  useAutoLogout();
+
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [username, setUsername] = useState("Admin User");
@@ -20,9 +24,24 @@ export default function Layout() {
 
   const profileRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const isPrintRoute = location.pathname.startsWith("/cetak");
+
+  /*
+   * Dashboard utama dibuat sebagai landing page.
+   * Karena dashboard sudah memiliki desain sendiri,
+   * page header Layout tidak perlu ditampilkan.
+   */
+  const isDashboard =
+    location.pathname === "/" ||
+    location.pathname === "/dashboard";
+
+  const sidebarWidth = isCollapsed
+    ? SIDEBAR_COLLAPSED
+    : SIDEBAR_EXPANDED;
 
   const handleLogout = () => {
     localStorage.removeItem("custom_user");
@@ -32,54 +51,94 @@ export default function Layout() {
   const getCurrentCustomUser = async () => {
     try {
       const raw = localStorage.getItem("custom_user");
+
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed?.id) return parsed;
+
+        if (parsed?.id) {
+          return parsed;
+        }
       }
 
       const { data: authData } = await supabase.auth.getUser();
+
       const email = authData?.user?.email;
+
       if (email) {
         const { data, error } = await supabase
           .from("custom_users")
           .select("id,name,email,role")
           .eq("email", email)
           .single();
-        if (!error && data) return data;
+
+        if (!error && data) {
+          return data;
+        }
       }
     } catch (err) {
       console.warn("❌ Gagal ambil user:", err);
     }
+
     return null;
   };
 
   const handleChangePassword = async () => {
-    const newPassword = prompt("Masukkan password baru (minimal 6 karakter):");
-    if (!newPassword || newPassword.length < 6)
+    const newPassword = prompt(
+      "Masukkan password baru (minimal 6 karakter):"
+    );
+
+    if (!newPassword || newPassword.length < 6) {
       return alert("Password minimal 6 karakter.");
+    }
+
     const confirm = prompt("Konfirmasi password baru:");
-    if (confirm !== newPassword) return alert("Konfirmasi password tidak cocok.");
+
+    if (confirm !== newPassword) {
+      return alert("Konfirmasi password tidak cocok.");
+    }
 
     const current = await getCurrentCustomUser();
-    if (!current?.id) return alert("Tidak ada user yang login.");
+
+    if (!current?.id) {
+      return alert("Tidak ada user yang login.");
+    }
 
     const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
     const { error } = await supabase
       .from("custom_users")
-      .update({ password: hashedPassword })
+      .update({
+        password: hashedPassword,
+      })
       .eq("id", current.id);
 
-    if (error) alert("Gagal mengubah password: " + error.message);
-    else alert("Password berhasil diubah!");
+    if (error) {
+      alert("Gagal mengubah password: " + error.message);
+    } else {
+      alert("Password berhasil diubah!");
+    }
   };
 
+  /*
+   * ============================================================
+   * INIT USER + MENU
+   * ============================================================
+   */
   useEffect(() => {
     const init = async () => {
       const user = await getCurrentCustomUser();
 
       if (user) {
-        setUsername(user.name || user.email || "Admin User");
-        const access = user.role ? await getUserAccess(user.role) : [];
+        setUsername(
+          user.name ||
+            user.email ||
+            "Admin User"
+        );
+
+        const access = user.role
+          ? await getUserAccess(user.role)
+          : [];
+
         setUserAccess(access || []);
       } else {
         setUsername("Admin User");
@@ -87,22 +146,46 @@ export default function Layout() {
       }
 
       const menus = await getMenus();
+
       const uniquePaths = new Set<string>();
+
       const titles: Record<string, string> = {};
-      const hierarchyMap: Record<string, { label: string; path: string }[]> = {};
+
+      const hierarchyMap: Record<
+        string,
+        { label: string; path: string }[]
+      > = {};
 
       for (const menu of menus) {
-        if (menu.path && menu.label && !uniquePaths.has(menu.path)) {
+        if (
+          menu.path &&
+          menu.label &&
+          !uniquePaths.has(menu.path)
+        ) {
           titles[menu.path] = menu.label;
+
           uniquePaths.add(menu.path);
         }
+
         for (const sub of menu.sub ?? []) {
-          if (sub.path && sub.label && !uniquePaths.has(sub.path)) {
+          if (
+            sub.path &&
+            sub.label &&
+            !uniquePaths.has(sub.path)
+          ) {
             titles[sub.path] = sub.label;
+
             hierarchyMap[sub.path] = [
-              { label: menu.label, path: menu.path || "/" },
-              { label: sub.label, path: sub.path },
+              {
+                label: menu.label,
+                path: menu.path || "/",
+              },
+              {
+                label: sub.label,
+                path: sub.path,
+              },
             ];
+
             uniquePaths.add(sub.path);
           }
         }
@@ -117,51 +200,113 @@ export default function Layout() {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         profileRef.current &&
-        !profileRef.current.contains(event.target as Node) &&
+        !profileRef.current.contains(
+          event.target as Node
+        ) &&
         menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
+        !menuRef.current.contains(
+          event.target as Node
+        )
       ) {
         setShowMenu(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
   }, []);
 
-  const currentTitle = menuTitles[location.pathname] || "Dashboard";
+  const currentTitle =
+    menuTitles[location.pathname] || "Dashboard";
 
-  //-- tampilan tabel sroll horizontal --
+  /*
+   * ============================================================
+   * TABLE HORIZONTAL SCROLL
+   * ============================================================
+   */
   useEffect(() => {
     const wrapWideTables = () => {
-      const tables = document.querySelectorAll("table");
+      const tables =
+        document.querySelectorAll("table");
+
       tables.forEach((table) => {
         const parent = table.parentElement;
-        const alreadyWrapped = parent?.classList.contains("table-scroll-wrapper");
+
+        const alreadyWrapped =
+          parent?.classList.contains(
+            "table-scroll-wrapper"
+          );
+
         if (!alreadyWrapped) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "table-scroll-wrapper";
+          const wrapper =
+            document.createElement("div");
+
+          wrapper.className =
+            "table-scroll-wrapper";
+
           wrapper.style.overflowX = "auto";
           wrapper.style.width = "100%";
-          wrapper.style.maxWidth = "100vw"; // ⬅️ batasi agar scroll tidak lari ke body
+          wrapper.style.maxWidth = "100vw";
           wrapper.style.marginBottom = "16px";
 
-          parent?.insertBefore(wrapper, table);
+          parent?.insertBefore(
+            wrapper,
+            table
+          );
+
           wrapper.appendChild(table);
         }
       });
     };
 
-    wrapWideTables(); // initial wrap
-    const observer = new MutationObserver(wrapWideTables);
-    observer.observe(document.body, { childList: true, subtree: true });
+    wrapWideTables();
+
+    const observer =
+      new MutationObserver(
+        wrapWideTables
+      );
+
+    observer.observe(
+      document.body,
+      {
+        childList: true,
+        subtree: true,
+      }
+    );
 
     return () => observer.disconnect();
   }, []);
 
+  /*
+   * ============================================================
+   * RENDER
+   * ============================================================
+   */
   return (
-    <div className={`layout-wrapper`} style={{ display: "flex", minHeight: "100vh", backgroundColor: "#0092F5", overflowX: "hidden", overflowY: "auto", }}>
-      {!isPrintRoute && userAccess !== null ? (
+    <div
+      className="layout-wrapper"
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        backgroundColor: "#f5f9fc",
+        overflowX: "hidden",
+        overflowY: "auto",
+      }}
+    >
+      {/* ======================================================
+          SIDEBAR
+      ====================================================== */}
+      {!isPrintRoute &&
+        userAccess !== null ? (
         <Sidebar
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
@@ -170,95 +315,218 @@ export default function Layout() {
       ) : !isPrintRoute ? (
         <div
           style={{
-            width: isCollapsed ? "50px" : "250px",
-            background: "#2c3e50",
-            color: "white",
+            width: isCollapsed
+              ? `${SIDEBAR_COLLAPSED}px`
+              : `${SIDEBAR_EXPANDED}px`,
+            background: "#ffffff",
+            color: "#174a7e",
             height: "100vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "14px",
+            fontSize: "13px",
+            borderRight:
+              "1px solid #dbe7f3",
+            borderTop:
+              "4px solid #d62828",
           }}
         >
           Loading menu...
         </div>
       ) : null}
 
-      <div style={{ paddingTop: "5px", width: "100%", transition: "padding-left 0.3s" }}>
+      {/* ======================================================
+          CONTENT AREA
+      ====================================================== */}
+      <div
+        style={{
+          paddingTop: isPrintRoute
+            ? "0px"
+            : "0px",
+          width: "100%",
+          minWidth: 0,
+          transition:
+            "margin-left 0.3s ease",
+        }}
+      >
+        {/* ====================================================
+            TOP HEADER
+        ==================================================== */}
         {!isPrintRoute && (
           <div
             style={{
               position: "fixed",
               top: 0,
-              left: isCollapsed ? "50px" : "200px",
+              left: `${sidebarWidth}px`,
               right: 0,
-              height: "40px",
-              background: "#B7BABF",
-              borderBottom: "1px solid #ddd",
+              height: "68px",
+
+              /*
+               * Dashboard menggunakan background foto,
+               * sehingga header dibuat sedikit transparan.
+               */
+              backgroundColor: isDashboard
+                ? "rgba(255, 255, 255, 0.78)"
+                : "#ffffff",
+
+              backdropFilter:
+                "blur(8px)",
+
+              borderBottom:
+                "1px solid #eddbf3",
+
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent:
+                "space-between",
               alignItems: "center",
+
               padding: "0 20px",
+
               zIndex: 1000,
-              transition: "left 0.3s",
+
+              transition:
+                "left 0.3s ease",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <img src="/logo.png" alt="Logo" style={{ height: "40px", objectFit: "contain" }} />
+            {/* LEFT */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              {!isDashboard && (
+                <img
+                  src="/logo.png"
+                  alt="Butter Club Bakery"
+                  style={{
+                    height: "32px",
+                    width: "auto",
+                    objectFit: "contain",
+                  }}
+                />
+              )}
             </div>
 
+            {/* USER */}
             <div
               ref={profileRef}
               style={{
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
-                color: "black",
+                gap: "9px",
+                color: "#23415f",
+                userSelect: "none",
               }}
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() =>
+                setShowMenu(!showMenu)
+              }
             >
               <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  username
+                )}&background=e7f2ff&color=174a7e&bold=true`}
                 alt="Profil"
-                style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  border:
+                    "1px solid #d4c9f2",
+                }}
               />
-              <span style={{ fontWeight: "bold", fontSize: "12px" }}>{username}</span>
+
+              <span
+                style={{
+                  fontWeight: 600,
+                  fontSize: "12px",
+                }}
+              >
+                {username}
+              </span>
+
+              <span
+                style={{
+                  color: "#d62828",
+                  fontSize: "10px",
+                }}
+              >
+                ▼
+              </span>
             </div>
 
+            {/* PROFILE MENU */}
             {showMenu && (
               <div
                 ref={menuRef}
                 style={{
                   position: "absolute",
-                  top: "40px",
-                  right: "0px",
-                  background: "white",
-                  color: "black",
-                  boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-                  borderRadius: "2px",
+                  top: "48px",
+                  right: "16px",
+                  minWidth: "170px",
+
+                  background: "#ffffff",
+                  color: "#23415f",
+
+                  border:
+                    "1px solid #dbe7f3",
+
+                  boxShadow:
+                    "0 8px 25px rgba(31, 78, 121, 0.15)",
+
+                  borderRadius: "8px",
+
                   overflow: "hidden",
                   zIndex: 1100,
                 }}
               >
                 <div
-                  onClick={handleChangePassword}
+                  onClick={
+                    handleChangePassword
+                  }
                   style={{
-                    padding: "10px 20px",
+                    padding:
+                      "11px 16px",
                     cursor: "pointer",
-                    borderBottom: "1px solid #eee",
-                    fontSize: "14px",
+                    borderBottom:
+                      "1px solid #edf2f7",
+                    fontSize: "13px",
+                    transition:
+                      "background 0.2s",
                   }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background =
+                      "#f0f7ff")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      "#ffffff")
+                  }
                 >
                   Ubah Password
                 </div>
+
                 <div
                   onClick={handleLogout}
                   style={{
-                    padding: "10px 20px",
+                    padding:
+                      "11px 16px",
                     cursor: "pointer",
-                    fontSize: "14px",
+                    fontSize: "13px",
+                    color: "#c62828",
+                    transition:
+                      "background 0.2s",
                   }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background =
+                      "#fff5f5")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      "#ffffff")
+                  }
                 >
                   Logout
                 </div>
@@ -267,58 +535,181 @@ export default function Layout() {
           </div>
         )}
 
-        {!isPrintRoute && (
-          <div
-            style={{
-              marginLeft: isPrintRoute ? "0px" : isCollapsed ? "50px" : "200px",
-              marginTop: "40px",
-              padding: "10px 20px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              color: "white",
-              transition: "margin-left 0.3s ease",
-            }}
-          >
-            <div style={{ fontWeight: "bold", fontSize: "24px" }}>{currentTitle}</div>
+        {/* ====================================================
+            PAGE HEADER
+            Dashboard tidak menggunakan header ini.
+        ==================================================== */}
+        {!isPrintRoute &&
+          !isDashboard && (
+            <div
+              style={{
+                marginLeft: `${sidebarWidth}px`,
+                marginTop: "68px",
 
-            <div style={{ fontSize: "12px", opacity: 0.9 }}>
-              {breadcrumbMap[location.pathname]?.map((item, idx) => (
-                <span key={`${item.path}-${idx}`}>
-                  <span
-                    style={{ cursor: "pointer", textDecoration: "underline" }}
-                    onClick={() => navigate(item.path)}
-                  >
-                    {item.label}
-                  </span>
-                  {idx < breadcrumbMap[location.pathname].length - 1 && (
-                    <span style={{ margin: "0 4px" }}>{">"}</span>
-                  )}
-                </span>
-              ))}
+                padding:
+                  "12px 24px",
+
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                alignItems: "center",
+
+                color: "#23415f",
+
+                transition:
+                  "margin-left 0.3s ease",
+
+                background:
+                  "#DCEBFA",
+
+                borderBottom:
+                  "1px solid #e5edf5",
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "22px",
+                }}
+              >
+                {currentTitle}
+              </div>
+
+              <div
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7f93",
+                }}
+              >
+                {breadcrumbMap[
+                  location.pathname
+                ]?.map(
+                  (item, idx) => (
+                    <span
+                      key={`${item.path}-${idx}`}
+                    >
+                      <span
+                        style={{
+                          cursor:
+                            "pointer",
+                          textDecoration:
+                            "none",
+                          color:
+                            idx === 0
+                              ? "#2877bd"
+                              : "#6b7f93",
+                        }}
+                        onClick={() =>
+                          navigate(
+                            item.path
+                          )
+                        }
+                      >
+                        {item.label}
+                      </span>
+
+                      {idx <
+                        breadcrumbMap[
+                          location.pathname
+                        ].length -
+                          1 && (
+                        <span
+                          style={{
+                            margin:
+                              "0 5px",
+                            color:
+                              "#9bb4ca",
+                          }}
+                        >
+                          /
+                        </span>
+                      )}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
-                   </div>
-        )}
+          )}
 
-        {/* Konten utama */}
+        {/* ====================================================
+            MAIN CONTENT
+        ==================================================== */}
         <div
           className="main-content"
           style={{
             flex: 1,
-            marginLeft: isPrintRoute ? "0px" : isCollapsed ? "50px" : "200px",
-            padding: "20px 20px 20px 20px",
-            transition: "margin-left 0.3s",
-            backgroundColor: isPrintRoute ? "white" : "#fff",
-            borderRadius: "5px",
-            borderTop: isPrintRoute ? "none" : "10px solid #B7BABF",
+
+            marginLeft:
+              isPrintRoute
+                ? "0px"
+                : `${sidebarWidth}px`,
+
+            marginTop:
+              isPrintRoute
+                ? "0px"
+                : isDashboard
+                ? "48px"
+                : "0px",
+
+            padding:
+              isDashboard
+                ? "0px"
+                : "20px",
+
+            transition:
+              "margin-left 0.3s ease",
+
+            /*
+             * Dashboard transparan agar background
+             * dari Dashboard.tsx bisa terlihat.
+             */
+            backgroundColor:
+              isPrintRoute
+                ? "#ffffff"
+                : isDashboard
+                ? "transparent"
+                : "#ffffff",
+
+            borderRadius:
+              isDashboard
+                ? "0px"
+                : "8px",
+
+            borderTop:
+              "none",
+
             width: "100%",
             maxWidth: "100%",
-            overflowX: "auto",
+
+            minHeight:
+              isDashboard
+                ? "calc(100vh - 48px)"
+                : "calc(100vh - 48px)",
+
+            overflowX:
+              isDashboard
+                ? "hidden"
+                : "auto",
+
             overflowY: "auto",
+
+            boxSizing:
+              "border-box",
           }}
         >
-          <div style={{ minWidth: "800px" }}>
-          <Outlet />
+          <div
+            style={{
+              minWidth:
+                isDashboard
+                  ? "0"
+                  : "800px",
+              minHeight:
+                isDashboard
+                  ? "100%"
+                  : "auto",
+            }}
+          >
+            <Outlet />
           </div>
         </div>
       </div>
